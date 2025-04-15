@@ -10,3 +10,16 @@ def test_vehicle_parsing():
     assert isinstance(vehicles, list)
     assert all(isinstance(v, Vehicle) for v in vehicles)
     assert any("Mustang" in v.name for v in vehicles)
+
+def test_parser_extracts_vehicles():
+    html = """
+    <div class="vehicle-tile-inner" data-link-context='{"year":"2025"}'>
+        <div class="nameplate-name"><a>Bronco Sport<sup>®</sup></a></div>
+        <span data-pricing-template="{price}">À partir de 39 999$</span>
+    </div>
+    """
+    parser = HTMLParser(html)
+    vehicles = parser.parse_vehicles()
+    assert len(vehicles) == 1
+    assert "Bronco" in vehicles[0].name
+
