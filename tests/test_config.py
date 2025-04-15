@@ -1,13 +1,17 @@
 import os
-from core import config
+from core import config as config_module
 from importlib import reload
-import core.config as config_module
 
 def test_env_loaded():
-    assert config.Config.HTML_SOURCE_TYPE in ["file", "url"]
-    assert isinstance(config.Config.EXPORT_PATH, str)
+    config_data = config_module.get_config()  # Use the function-based config
+    assert config_data["HTML_SOURCE_TYPE"] in ["file", "url"]
+    assert isinstance(config_data["EXPORT_PATH"], str)
 
 def test_config_defaults_on_missing_env(monkeypatch):
+    # Remove the environment variable temporarily
     monkeypatch.delenv("EXPORT_PATH", raising=False)
-    reload(config_module)
-    assert config_module.Config.EXPORT_PATH == "vehicles.json"
+    
+    # Reload config to get updated environment variables
+    config_data = config_module.get_config()
+    
+    assert config_data["EXPORT_PATH"] == "vehicles.json"

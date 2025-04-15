@@ -1,16 +1,17 @@
-from core.config import Config
 from core.fetcher import HTMLFetcher, SeleniumFetcher
 from core.parser import HTMLParser
 from core.exporter import DataExporter
+from core.config import get_config
 
-if __name__ == "__main__":
-    if Config.HTML_SOURCE_TYPE == "file":
-        html = HTMLFetcher.from_file(Config.HTML_SOURCE_PATH)
-    elif Config.HTML_SOURCE_TYPE == "url":
+def main():
+    config = get_config()
+    if config["HTML_SOURCE_TYPE"] == "file":
+        html = HTMLFetcher.from_file(config["HTML_SOURCE_PATH"])
+    elif config["HTML_SOURCE_TYPE"] == "url":
         fetcher = SeleniumFetcher(
-            url=Config.HTML_SOURCE_PATH,
-            wait_for=Config.WAIT_FOR_SELECTOR,
-            headless=Config.HEADLESS
+            url=config["HTML_SOURCE_PATH"],
+            wait_for=config["WAIT_FOR_SELECTOR"],
+            headless=config["HEADLESS"]
         )
         html = fetcher.fetch()
     else:
@@ -18,4 +19,7 @@ if __name__ == "__main__":
 
     parser = HTMLParser(html)
     vehicles = parser.parse_vehicles()
-    DataExporter.to_json(vehicles, Config.EXPORT_PATH)
+    DataExporter.to_json(vehicles, config["EXPORT_PATH"])
+
+if __name__ == "__main__":
+    main()

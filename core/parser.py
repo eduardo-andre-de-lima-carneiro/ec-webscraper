@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 from .models import Vehicle
 from .utils import get_logger
@@ -15,22 +16,19 @@ class HTMLParser:
         for tile in tiles:
             try:
                 # Get name
-                name_tag = tile.select_one(".np-desc") #(".nameplate-name a")
-                name = name_tag.get_text(strip=True).replace("®", "")
+                name_tag = tile.select_one(".np-desc")
+                name = name_tag.get_text(strip=True).replace("®", "") if name_tag else "N/A"
 
-                # Get year from data attribute
-                # year = tile.get("data-link-context", "")
-                # year = year.split('"year":"')[1].split('"')[0] if "year" in year else "N/A"
                 year_tag = tile.select_one(".np-year")
-                year = year_tag.get_text(strip=True) or "N/A" #(".nameplate-name a")
+                year = year_tag.get_text(strip=True) if year_tag else "N/A"
 
-                # Get price (if exists)
-                price = "N/A"
                 price_tag = tile.select_one(".price-box")
-                if price_tag:
-                    price = price_tag.get_text(strip=True).replace("À partir de","").replace("$1","") or "N/A"
-
-                vehicles.append(Vehicle(name=name, year=year, price=price))
+                price = (
+                    re.sub(r"[^0-9\.,]", "", price_tag.get_text(strip=True)) or "N/A"
+                )
+                vehicle = Vehicle(name=name, year=year, price=price)
+                if vehicle.is_valid():
+                    vehicles.append(vehicle)
             except Exception as e:
                 logger.warning(f"⚠️ Failed to parse vehicle: {e}")
         return vehicles
