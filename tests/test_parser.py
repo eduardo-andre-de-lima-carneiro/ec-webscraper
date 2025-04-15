@@ -23,3 +23,7 @@ def test_parser_extracts_vehicles():
     assert len(vehicles) == 1
     assert "Bronco" in vehicles[0].name
 
+def test_parser_with_empty_html():
+    parser = HTMLParser("")
+    vehicles = parser.parse_vehicles()
+    assert vehicles == []
