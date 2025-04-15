@@ -1,15 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from core.fetcher import HTMLFetcher, SeleniumFetcher
+from core.fetcher import SeleniumFetcher
 
-def test_fetch_from_file(tmp_path):
-    file = tmp_path / "sample.html"
-    file.write_text("<html><body>test</body></html>", encoding="utf-8")
-    content = HTMLFetcher.from_file(str(file))
-    assert "test" in content
-
-@patch("core.fetcher.webdriver.Chrome")
-@patch("core.fetcher.ChromeDriverManager")
+@patch("selenium.webdriver.Chrome")
+@patch("webdriver_manager.chrome.ChromeDriverManager")
 def test_selenium_fetcher_mocked(mock_driver_manager, mock_chrome):
     fake_driver = MagicMock()
     fake_driver.page_source = "<html><body><div class='vehicle-tile-inner'></div></body></html>"

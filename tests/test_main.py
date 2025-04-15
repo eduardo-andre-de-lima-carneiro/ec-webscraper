@@ -2,9 +2,9 @@ import os
 from unittest.mock import patch, MagicMock
 import main as main_module
 
-@patch("core.main.HTMLFetcher.from_file")
-@patch("core.main.HTMLParser.parse_vehicles")
-@patch("core.main.DataExporter.to_json")
+@patch("ec-webscraper.main.HTMLFetcher.from_file")
+@patch("ec-webscraper.main.HTMLParser.parse_vehicles")
+@patch("ec-webscraper.main.DataExporter.to_json")
 def test_main_file_pipeline(mock_export, mock_parse, mock_fetch):
     os.environ["HTML_SOURCE_TYPE"] = "file"
     os.environ["HTML_SOURCE_PATH"] = "dummy.html"
